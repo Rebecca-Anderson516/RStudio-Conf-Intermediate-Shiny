@@ -39,6 +39,14 @@ dataset_summarizer <- function(input, output, session, dataset, count) {
   output$summary <- renderPrint({
     summary(head(dataset(), count()))
   })
+  
+  mean_x <- reactive({ mean(dataset()[,1]) })
+  mean_y <-reactive({mean(dataset()[,2])})
+  
+  return(list(
+    mean_x=mean_x,
+    mean_y=mean_y
+  ))
 }
 
 # App combining Module 1 and Module 2 -----------------------------------------

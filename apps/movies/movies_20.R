@@ -6,6 +6,29 @@ library(dplyr)
 library(tools)
 load("movies.Rdata")
 
+movies_UI <- function(id) {
+  ns <- NS(id)
+  tagList(
+    plotOutput(ns("scatterplot_doc")),
+    DT::dataTableOutput(ns("moviestable_doc")),
+  
+  )
+}
+
+movies <- function(input, output, session) {
+  
+  output$scatterplot_doc <- renderPlot({
+    ggplot(data = docs(), aes_string(x = input$x, y = input$y, color = input$z)) +
+      geom_point(alpha = input$alpha, size = input$size) +
+      labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
+           y = toTitleCase(str_replace_all(input$y, "_", " ")),
+           color = toTitleCase(str_replace_all(input$z, "_", " "))
+      )
+  })
+  
+}
+
+
 # Define UI for application that plots features of movies -----------
 ui <- fluidPage(
   
@@ -72,15 +95,15 @@ ui <- fluidPage(
       
       # Show scatterplot --------------------------------------------
       tabsetPanel(id = "movies", 
-                  tabPanel("Documentaries", 
-                           plotOutput("scatterplot_doc"),
-                           DT::dataTableOutput("moviestable_doc")),
-                  tabPanel("Feature Films", 
-                           plotOutput("scatterplot_feature"),
-                           DT::dataTableOutput("moviestable_feature")),
-                  tabPanel("TV Movies", 
-                           plotOutput("scatterplot_tv"),
-                           DT::dataTableOutput("moviestable_tv"))
+                  tabPanel("Documentaries", scatterplot_UI("docs")),
+                           # plotOutput("scatterplot_doc"),
+                           # DT::dataTableOutput("moviestable_doc")),
+                  tabPanel("Feature Films", scatterplot_UT("features")),
+                           # plotOutput("scatterplot_feature"),
+                           # DT::dataTableOutput("moviestable_feature")),
+                  tabPanel("TV Movies", scatterplot_UI("tvs"))
+                           # plotOutput("scatterplot_tv"),
+                           # DT::dataTableOutput("moviestable_tv"))
       )
       
     )
@@ -95,9 +118,10 @@ server <- function(input, output, session) {
     filter(movies, title_type == "Documentary")
   })
   
-  features <- reactive({
-    filter(movies, title_type == "Feature Film")
-  })
+  features <- callModule(features,
+    #reactive({
+  #   filter(movies, title_type == "Feature Film")
+  # })
   
   tvs <- reactive({
     filter(movies, title_type == "TV Movie")

@@ -27,7 +27,15 @@ ui <- fluidPage(
       selectInput(inputId = "z", 
                   label = "Color by:",
                   choices = c("title_type", "genre", "mpaa_rating", "critics_rating", "audience_rating"),
-                  selected = "mpaa_rating")
+                  selected = "mpaa_rating"),
+      
+      # Select variable for point size -----------------------------------
+      
+      sliderInput(inputId = "alpha", 
+                  label = "Alpha:",
+                  min = 0,
+                  max = 1,
+                  value = 0.5)
     ),
     
     # Output: Show scatterplot --------------------------------------
@@ -44,8 +52,9 @@ server <- function(input, output) {
   output$scatterplot <- renderPlot({
     ggplot(data = movies, aes_string(x = input$x, y = input$y,
                                      color = input$z)) +
-      geom_point()
+      geom_point(alpha = input$alpha)
   })
+
 }
 
 # Run the application -----------------------------------------------

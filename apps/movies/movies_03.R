@@ -33,12 +33,21 @@ ui <- fluidPage(
       sliderInput(inputId = "alpha", 
                   label = "Alpha:", 
                   min = 0, max = 1, 
-                  value = 0.5)
+                  value = 0.5),
+    
+    #Add checkbox input to show data in table
+    checkboxInput(inputId="table",
+                  label="Show Data Table?",
+                  value=FALSE
+                  )
     ),
+    
     
     # Output: Show scatterplot --------------------------------------
     mainPanel(
-      plotOutput(outputId = "scatterplot")
+      plotOutput(outputId = "scatterplot"),
+      
+      DT::renderDataTable(outputID=""
     )
   )
 )
@@ -52,6 +61,15 @@ server <- function(input, output) {
                                      color = input$z)) +
       geom_point(alpha = input$alpha)
   })
+  
+  #Create Data Table with movies
+  output$moviedata<-DT::renderDataTable(
+    if(input$show_data) {
+      
+    }
+    data=movies[,1:7],
+                                        options=list(pageLength=10),
+                                        rownames=FALSE)
 }
 
 # Run the application -----------------------------------------------

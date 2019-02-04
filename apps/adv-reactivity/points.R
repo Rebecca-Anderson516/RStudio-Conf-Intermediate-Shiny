@@ -1,4 +1,5 @@
 library(shiny)
+library(dplyr)
 
 # Define UI for specifying points on a plot -------------------------
 ui <- fluidPage(
@@ -32,12 +33,16 @@ server <- function(input, output, session) {
     rv$data
   })
   
+debounced_data <- debounce(data, 1000)
+  
   # Summarize data
   output$summary <- renderPrint({
     # Insert artificial slowness
     on.exit(Sys.sleep(1))
     
     summary(data())
+    
+    print(summary(debounced_data()))
   })
 }
 

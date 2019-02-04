@@ -75,7 +75,7 @@ ui <- fluidPage(
                            DT::dataTableOutput("moviestable_doc")),
                   tabPanel("Feature Films",
                            plotOutput("scatterplot_features"),
-                           DT::dataTableOutput("moviestable_features")),
+                           DT::dataTableOutput("moviestable_feature")),
                   tabPanel("TV Movies",
                            plotOutput("scatterplot_tv"),
                            DT::dataTableOutput("moviestable_tv"))
@@ -93,7 +93,7 @@ server <- function(input, output, session) {
   })
 
   features <- reactive({
-    filter(movies, title_type == "Feature Film")
+    filter(movies, title_type == "Feature Films")
   })
 
   tvs <- reactive({
@@ -111,7 +111,7 @@ server <- function(input, output, session) {
   })
 
   # Scatterplot for features ----------------------------------------
-  output$scatterplot_feature <- renderPlot({
+  output$scatterplot_features <- renderPlot({
     ggplot(data = features(), aes_string(x = input$x, y = input$y, color = input$z)) +
       geom_point(alpha = input$alpha, size = input$size) +
       labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),

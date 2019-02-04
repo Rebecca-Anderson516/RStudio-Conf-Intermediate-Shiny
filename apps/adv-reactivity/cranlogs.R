@@ -42,6 +42,7 @@ server <- function(input, output, session) {
   })
   
   # Plot weekly downloads, plus trendline
+  
   output$plot <- renderPlot({
     ggplot(weekly_downloads(), aes(date, count, color = package)) +
       geom_line() +
